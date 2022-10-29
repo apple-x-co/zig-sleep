@@ -29,6 +29,10 @@ pub fn main() !void {
             // try writer.print("{c}", .{bar}); // FIXME: 文字化ける
         }
 
+        // FIXME: 以下もNG
+        // var s = progressBar(i, seconds);
+        // try writer.print("{s}", .{s});
+
         try writer.print("\u{001b}[0m] \u{001b}[32m{}/{}\u{001b}[0m\r", .{seconds - i, seconds});
 
         std.time.sleep(1000000000);
@@ -59,5 +63,5 @@ fn progressBar(currentTime: u64, totalTime: u64) []const u8 {
         break;
     }
 
-    return strings[0..];
+    return strings[0..maxWidth];
 }
