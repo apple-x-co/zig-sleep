@@ -22,7 +22,7 @@ pub fn main() !void {
 
     var i: u64 = 0;
     while (i <= seconds) : (i += 1) {
-        try writer.print("[\x1b[2K[\u{001b}[42m", .{});
+        try writer.print("[\x1b[2K[\u{001b}[42m\u{001b}[1m", .{});
 
         for (progressBar(i, seconds)) |bar| {
             std.debug.print("{c}", .{bar});
