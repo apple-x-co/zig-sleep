@@ -20,38 +20,41 @@ pub fn main() !void {
 
     // TODO: 1秒以下の秒数
     const seconds = try std.fmt.parseInt(u64, paramSeconds, 10);
+    const milliseconds = seconds * 1000;
 
     var i: u64 = 0;
-    while (i <= seconds) : (i += 1) {
-        var strings = try progressBar(allocator, i, seconds);
-        defer strings.deinit();
+    while (i <= milliseconds) : (i += 1) {
+        //if (i % 1000 == 0) {
+            var strings = try progressBar(allocator, i, milliseconds);
+            defer strings.deinit();
 
-        // TODO: リファクタリング
-        var loading = "⠿";
-        if (i % 7 == 1) {
-            loading = "⠷";
-        }
-        if (i % 7 == 2) {
-            loading = "⠯";
-        }
-        if (i % 7 == 3) {
-            loading = "⠟";
-        }
-        if (i % 7 == 4) {
-            loading = "⠻";
-        }
-        if (i % 7 == 5) {
-            loading = "⠽";
-        }
-        if (i % 7 == 6) {
-            loading = "⠾";
-        }
+            // TODO: リファクタリング
+            var loading = "⠿";
+            if (i % 7 == 1) {
+                loading = "⠷";
+            }
+            if (i % 7 == 2) {
+                loading = "⠯";
+            }
+            if (i % 7 == 3) {
+                loading = "⠟";
+            }
+            if (i % 7 == 4) {
+                loading = "⠻";
+            }
+            if (i % 7 == 5) {
+                loading = "⠽";
+            }
+            if (i % 7 == 6) {
+                loading = "⠾";
+            }
 
-        try writer.print("[\x1b[2K(\u{001b}[46m\u{001b}[37m", .{});
-        try writer.print("{s}", .{strings.items});
-        try writer.print("\u{001b}[0m) {s} \u{001b}[1m\u{001b}[36m{}/{}\u{001b}[0m\r", .{loading, seconds - i, seconds});
+            try writer.print("[\x1b[2K(\u{001b}[46m\u{001b}[37m", .{});
+            try writer.print("{s}", .{strings.items});
+            try writer.print("\u{001b}[0m) {s} \u{001b}[1m\u{001b}[36m{}/{}\u{001b}[0m\r", .{loading, (milliseconds - i) / 1000, milliseconds / 1000});
+        //}
 
-        std.time.sleep(1000000000);
+        std.time.sleep(1000000);
     }
 
     try writer.print("\n", .{});
