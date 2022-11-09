@@ -20,10 +20,18 @@ pub fn main() !void {
 
     // TODO: 1秒以下の秒数
     const seconds = try std.fmt.parseInt(u64, paramSeconds, 10);
-    const milliseconds = seconds * 1000;
+    const milliseconds = seconds * std.time.ns_per_us;
+
+    // FIXME: 遅れる
+    // TODO: 現在時間から終わり時間を算出して i を補正する?
+
+    var totalSeconds: u64 = milliseconds / std.time.ns_per_us;
 
     var i: u64 = 0;
-    while (i <= milliseconds) : (i += 1) {
+    while (i < milliseconds) : (i += 1) {
+        // FIXME: 遅れる
+        // TODO: i を補正する??
+
         //if (i % 1000 == 0) {
             var strings = try progressBar(allocator, i, milliseconds);
             defer strings.deinit();
@@ -49,15 +57,17 @@ pub fn main() !void {
                 loading = "⠾";
             }
 
+            var currentSeconds = @ceil(@intToFloat(f32, (milliseconds - i)) / @intToFloat(f32, std.time.ns_per_us));
+
             try writer.print("[\x1b[2K(\u{001b}[46m\u{001b}[37m", .{});
             try writer.print("{s}", .{strings.items});
-            try writer.print("\u{001b}[0m) {s} \u{001b}[1m\u{001b}[36m{}/{}\u{001b}[0m\r", .{loading, (milliseconds - i) / 1000, milliseconds / 1000});
+            try writer.print("\u{001b}[0m) {s} \u{001b}[1m\u{001b}[36m{d}/{}\u{001b}[0m\r", .{loading, currentSeconds, totalSeconds});
         //}
 
-        std.time.sleep(1000000);
+        std.time.sleep(1 * std.time.ns_per_ms);
     }
 
-    try writer.print("\n", .{});
+    try writer.print("[\x1b[2K\u{001b}[46m\u{001b}[37mFINISH!! {} seconds.\u{001b}[0m\n", .{totalSeconds});
 }
 
 fn progressBar(allocator: std.mem.Allocator, currentTime: u64, totalTime: u64) anyerror!std.ArrayList(u8) {
