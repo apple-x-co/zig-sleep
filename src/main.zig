@@ -27,40 +27,39 @@ pub fn main() !void {
     var totalSeconds: f32 = @intToFloat(f32, milliseconds) / @intToFloat(f32, std.time.ns_per_us);
 
     var i: u64 = 0;
+    var currentSeconds: f64 = 0.0;
     while (i < milliseconds) : (i += 1) {
         // FIXME: 遅れる
         // TODO: i を補正する??
 
         //if (i % 1000 == 0) {
-            var strings = try progressBar(allocator, i, milliseconds);
-            defer strings.deinit();
+        var strings = try progressBar(allocator, i, milliseconds);
+        defer strings.deinit();
 
-            // TODO: リファクタリング
-            var loading = "⠿";
-            if (i % 7 == 1) {
-                loading = "⠷";
-            }
-            if (i % 7 == 2) {
-                loading = "⠯";
-            }
-            if (i % 7 == 3) {
-                loading = "⠟";
-            }
-            if (i % 7 == 4) {
-                loading = "⠻";
-            }
-            if (i % 7 == 5) {
-                loading = "⠽";
-            }
-            if (i % 7 == 6) {
-                loading = "⠾";
-            }
+        // TODO: リファクタリング
+        var loading = "⠿";
+        if (i % 7 == 1) {
+            loading = "⠷";
+        }
+        if (i % 7 == 2) {
+            loading = "⠯";
+        }
+        if (i % 7 == 3) {
+            loading = "⠟";
+        }
+        if (i % 7 == 4) {
+            loading = "⠻";
+        }
+        if (i % 7 == 5) {
+            loading = "⠽";
+        }
+        if (i % 7 == 6) {
+            loading = "⠾";
+        }
 
-            var currentSeconds = @intToFloat(f32, (milliseconds - i)) / @intToFloat(f32, std.time.ns_per_us);
+        currentSeconds = @intToFloat(f32, (milliseconds - i)) / @intToFloat(f32, std.time.ns_per_us);
 
-            try writer.print("[\x1b[2K(\u{001b}[46m\u{001b}[37m", .{});
-            try writer.print("{s}", .{strings.items});
-            try writer.print("\u{001b}[0m) {s} \u{001b}[1m\u{001b}[36m{d:.1}/{d:.1}\u{001b}[0m\r", .{loading, currentSeconds, totalSeconds});
+        try writer.print("[\x1b[2K(\u{001b}[46m\u{001b}[37m{s}\u{001b}[0m) {s} \u{001b}[1m\u{001b}[36m{d:.1}/{d:.1}\u{001b}[0m\r", .{ strings.items, loading, currentSeconds, totalSeconds });
         //}
 
         std.time.sleep(1 * std.time.ns_per_ms);
@@ -77,7 +76,7 @@ fn progressBar(allocator: std.mem.Allocator, currentTime: u64, totalTime: u64) a
     var strings = std.ArrayList(u8).init(allocator);
 
     var i: u64 = 0;
-    while (i < maxWidth) : (i += 1)  {
+    while (i < maxWidth) : (i += 1) {
         if (maxWidth == current) {
             try strings.append('*');
             continue;
