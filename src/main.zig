@@ -1,7 +1,7 @@
 const std = @import("std");
 
 pub fn main() !void {
-    std.log.info("s:{s}, u:{u}\n", .{"👾👾", '👾'});
+    // std.log.info("s:{s}, u:{u}\n", .{"👾👾", '👾'});
 
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
