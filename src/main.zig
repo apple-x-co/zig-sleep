@@ -18,6 +18,16 @@ pub fn main() !void {
     const stdout = std.io.getStdOut();
     const writer = stdout.writer();
 
+    var loadingMap = std.AutoHashMap(u64, []const u8).init(allocator);
+    defer loadingMap.deinit();
+    try loadingMap.put(0, "⠿");
+    try loadingMap.put(1, "⠷");
+    try loadingMap.put(2, "⠯");
+    try loadingMap.put(3, "⠟");
+    try loadingMap.put(4, "⠻");
+    try loadingMap.put(5, "⠽");
+    try loadingMap.put(6, "⠾");
+
     const seconds = try std.fmt.parseFloat(f32, paramSeconds);
     const milliseconds = @floatToInt(u64, seconds * std.time.ns_per_us);
 
@@ -30,26 +40,7 @@ pub fn main() !void {
         var strings = try progressBar(allocator, i, milliseconds);
         defer strings.deinit();
 
-        // TODO: リファクタリング
-        var loading = "⠿";
-        if (i % 7 == 1) {
-            loading = "⠷";
-        }
-        if (i % 7 == 2) {
-            loading = "⠯";
-        }
-        if (i % 7 == 3) {
-            loading = "⠟";
-        }
-        if (i % 7 == 4) {
-            loading = "⠻";
-        }
-        if (i % 7 == 5) {
-            loading = "⠽";
-        }
-        if (i % 7 == 6) {
-            loading = "⠾";
-        }
+        const loading = loadingMap.get(i % 7).?;
 
         currentSeconds = @intToFloat(f32, (milliseconds - i)) / @intToFloat(f32, std.time.ns_per_us);
 
