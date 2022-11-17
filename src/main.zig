@@ -1,14 +1,6 @@
 const std = @import("std");
 
 pub fn main() !void {
-    // std.log.info("s:{s}, u:{u}\n", .{"👾👾", '👾'});
-    // const emoji1 = "👾";
-    // std.log.info("s:{s}\n", .{emoji1});
-    // const emoji2 = '👾';
-    // std.log.info("u:{u}\n", .{emoji2});
-    // var utf = try std.unicode.Utf8View.init("👾");
-    // std.log.info("s:{s}\n", .{utf.bytes});
-
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
     defer _ = gpa.deinit();
@@ -52,7 +44,6 @@ pub fn main() !void {
 
         currentSeconds = @intToFloat(f32, (milliseconds - i)) / @intToFloat(f32, std.time.ns_per_us);
 
-        // try writer.print("[\x1b[2K(\u{001b}[46m\u{001b}[37m{s}\u{001b}[0m) {s} \u{001b}[1m\u{001b}[36m{d:.1}/{d:.1}\u{001b}[0m\r", .{ strings.items, loading, currentSeconds, totalSeconds });
         try writer.print("[\x1b[2K(", .{});
         for (strings.items) |item| {
             try writer.print("{s}", .{ item });
@@ -71,34 +62,25 @@ fn progressBar(allocator: std.mem.Allocator, currentTime: u64, totalTime: u64) a
     const ratio = @intToFloat(f64, currentTime) / @intToFloat(f64, totalTime);
     const current = @floatToInt(u64, maxWidth * ratio);
 
+    const emoji1:[]const u8 = "🌲";
+    const emoji2:[]const u8 = "🔅";
+    const emoji3:[]const u8 = "🌱";
+
     var strings = std.ArrayList([] const u8).init(allocator);
 
     var i: u64 = 0;
     while (i < maxWidth) : (i += 1) {
-        // if (maxWidth == current) {
-        //     var utf1 = try std.unicode.Utf8View.init("👾");
-        //     try strings.append(utf1.bytes);
-        //     // try strings.append('*');
-        //     continue;
-        // }
-
         if (i < current) {
-            var utf1 = try std.unicode.Utf8View.init("🌲");
-            try strings.append(utf1.bytes);
-            // try strings.append('-');
+            try strings.append(emoji1);
             continue;
         }
 
         if (i == current) {
-            var utf1 = try std.unicode.Utf8View.init("🔅");
-            try strings.append(utf1.bytes);
-            // try strings.append('>');
+            try strings.append(emoji2);
             continue;
         }
 
-        var utf1 = try std.unicode.Utf8View.init("🌱");
-        try strings.append(utf1.bytes);
-        // try strings.append('_');
+        try strings.append(emoji3);
     }
 
     return strings;
