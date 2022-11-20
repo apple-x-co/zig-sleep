@@ -1,9 +1,9 @@
 const std = @import("std");
 
 const progressBarWidth = 20;
-const emoji1:[]const u8 = "🌲";
-const emoji2:[]const u8 = "🔅";
-const emoji3:[]const u8 = "🌱";
+const emoji1: []const u8 = "🌲";
+const emoji2: []const u8 = "🔅";
+const emoji3: []const u8 = "🌱";
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -51,7 +51,7 @@ pub fn main() !void {
 
         try writer.print("[\x1b[2K🦉 ", .{});
         for (strings.items) |item| {
-            try writer.print("{s}", .{ item });
+            try writer.print("{s}", .{item});
         }
         try writer.print(" 🕊  {s} \u{001b}[37m\u{001b}[1m\u{001b}[36m {d:.1}/{d:.1} \u{001b}[0m\r", .{ loading, currentSeconds, totalSeconds });
 
@@ -62,11 +62,11 @@ pub fn main() !void {
     try writer.print("[\x1b[2K\u{001b}[46m\u{001b}[37m FINISH 🙌 {d:.1} seconds. \u{001b}[0m\n", .{totalSeconds});
 }
 
-fn progressBar(allocator: std.mem.Allocator, currentTime: u64, totalTime: u64) anyerror!std.ArrayList([] const u8) {
+fn progressBar(allocator: std.mem.Allocator, currentTime: u64, totalTime: u64) anyerror!std.ArrayList([]const u8) {
     const ratio = @intToFloat(f64, currentTime) / @intToFloat(f64, totalTime);
     const current = @floatToInt(u64, progressBarWidth * ratio);
 
-    var strings = try std.ArrayList([] const u8).initCapacity(allocator, progressBarWidth);
+    var strings = try std.ArrayList([]const u8).initCapacity(allocator, progressBarWidth);
 
     var i: u64 = 0;
     while (i < progressBarWidth) : (i += 1) {
