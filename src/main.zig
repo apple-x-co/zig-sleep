@@ -66,7 +66,7 @@ fn progressBar(allocator: std.mem.Allocator, currentTime: u64, totalTime: u64) a
     const ratio = @intToFloat(f64, currentTime) / @intToFloat(f64, totalTime);
     const current = @floatToInt(u64, progressBarWidth * ratio);
 
-    var strings = std.ArrayList([] const u8).init(allocator);
+    var strings = try std.ArrayList([] const u8).initCapacity(allocator, progressBarWidth);
 
     var i: u64 = 0;
     while (i < progressBarWidth) : (i += 1) {
