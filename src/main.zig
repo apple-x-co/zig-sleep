@@ -49,11 +49,11 @@ pub fn main() !void {
 
         currentSeconds = @intToFloat(f32, (milliseconds - i)) / @intToFloat(f32, std.time.ns_per_us);
 
-        try writer.print("[\x1b[2K🦉 ", .{});
+        writer.print("[\x1b[2K🦉 ", .{}) catch unreachable;
         for (strings.items) |item| {
-            try writer.print("{s}", .{item});
+            writer.print("{s}", .{item}) catch unreachable;
         }
-        try writer.print(" 🕊  {s} \u{001b}[37m\u{001b}[1m\u{001b}[36m {d:.1}/{d:.1} \u{001b}[0m\r", .{ loading, currentSeconds, totalSeconds });
+        writer.print(" 🕊  {s} \u{001b}[37m\u{001b}[1m\u{001b}[36m {d:.1}/{d:.1} \u{001b}[0m\r", .{ loading, currentSeconds, totalSeconds }) catch unreachable;
 
         std.time.sleep(1 * std.time.ns_per_ms);
         i = timer.read() / std.time.ns_per_ms;
@@ -71,16 +71,16 @@ fn progressBar(allocator: std.mem.Allocator, currentTime: u64, totalTime: u64) a
     var i: u64 = 0;
     while (i < progressBarWidth) : (i += 1) {
         if (i < current) {
-            try strings.append(emoji1);
+            strings.append(emoji1) catch unreachable;
             continue;
         }
 
         if (i == current) {
-            try strings.append(emoji2);
+            strings.append(emoji2) catch unreachable;
             continue;
         }
 
-        try strings.append(emoji3);
+        strings.append(emoji3) catch unreachable;
     }
 
     return strings;
