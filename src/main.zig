@@ -17,7 +17,7 @@ pub fn main() !void {
     const paramSeconds = args.next() orelse {
         std.log.err("usage: {s} seconds", .{prog});
 
-        return error.InvalidArgs;
+        return error.InvalidArgument;
     };
 
     const stdout = std.io.getStdOut();
@@ -34,9 +34,9 @@ pub fn main() !void {
     try loadingMap.put(6, "⠾");
 
     const seconds = try std.fmt.parseFloat(f32, paramSeconds);
-    const milliseconds = @floatToInt(u64, seconds * std.time.ns_per_us);
+    const milliseconds = @as(u64, @intFromFloat(seconds * std.time.ns_per_us));
 
-    var totalSeconds: f32 = @intToFloat(f32, milliseconds) / @intToFloat(f32, std.time.ns_per_us);
+    var totalSeconds: f32 = @as(f32, @floatFromInt(milliseconds)) / @as(f32, @floatFromInt(std.time.ns_per_us));
 
     var i: u64 = 0;
     var currentSeconds: f64 = 0.0;
@@ -47,7 +47,7 @@ pub fn main() !void {
 
         const loading = loadingMap.get(i % 7).?;
 
-        currentSeconds = @intToFloat(f32, (milliseconds - i)) / @intToFloat(f32, std.time.ns_per_us);
+        currentSeconds = @as(f32, @floatFromInt((milliseconds - i))) / @as(f32, @floatFromInt(std.time.ns_per_us));
 
         writer.print("[\x1b[2K🦉 ", .{}) catch unreachable;
         for (strings.items) |item| {
@@ -63,8 +63,8 @@ pub fn main() !void {
 }
 
 fn progressBar(allocator: std.mem.Allocator, currentTime: u64, totalTime: u64) anyerror!std.ArrayList([]const u8) {
-    const ratio = @intToFloat(f64, currentTime) / @intToFloat(f64, totalTime);
-    const current = @floatToInt(u64, progressBarWidth * ratio);
+    const ratio = @as(f64, @floatFromInt(currentTime)) / @as(f64, @floatFromInt(totalTime));
+    const current = @as(u64, @intFromFloat(progressBarWidth * ratio));
 
     var strings = try std.ArrayList([]const u8).initCapacity(allocator, progressBarWidth);
 
